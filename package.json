@@ -1,0 +1,44 @@
+{
+  "name": "alt-erro-servidor-parser",
+  "version": "0.0.1",
+  "main": "dist/alt-erro-servidor-parser.min.js",
+  "scripts": {
+    "test": "gulp unit_test",
+    "coverage": "gulp coverage"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "babel-register": "^6.7.2",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-stage-0": "^6.1.18",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.5.2",
+    "gulp-coveralls": "^0.1.4",
+    "gulp-cssmin": "^0.1.7",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^1.2.0",
+    "jasmine-core": "^2.3.0",
+    "karma": "^0.12.31",
+    "karma-chrome-launcher": "^0.1.8",
+    "karma-coverage": "^0.3.1",
+    "karma-firefox-launcher": "^0.1.4",
+    "karma-ie-launcher": "^0.1.5",
+    "karma-jasmine": "^0.3.5",
+    "karma-opera-launcher": "^0.1.0",
+    "karma-phantomjs-launcher": "^0.1.4",
+    "karma-safari-launcher": "^0.1.1"
+  },
+  "babel": {
+    "presets": ["es2015", "stage-0"]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dsn-nimbus/alt-erro-servidor-parser.git"
+  },
+  "author": "dsn-nimbus <ericdantas0@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dsn-nimbus/alt-erro-servidor-parser/issues"
+  },
+  "homepage": "https://github.com/dsn-nimbus/alt-erro-servidor-parser"
+}
