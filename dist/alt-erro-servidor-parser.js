@@ -3,31 +3,48 @@
 
   ng.module('alt.erro-servidor-parser', [])
     .config(['$provide', '$httpProvider', function($provide, $httpProvider) {
+        // INPUT:
         // {
+        //      status: 404,
         //      erros: [
-        //        {mensagem: 'algum erro 0'},
-        //        {mensagem: 'algum erro 1'},
-        //        {mensagem: 'algum erro 2'}
+        //        {mensagem: 'algum erro 0', outraInfo: '0'},
+        //        {mensagem: 'algum erro 1', outraInfo: '1'},
+        //        {mensagem: 'algum erro 2', outraInfo: '2'}
+        //      ]
+        // }
+
+        // OUTPUT:
+        // {
+        //      mensagem: 'algum erro 0',
+        //      status: 404,
+        //      mensagens: [
+        //        {mensagem: 'algum erro 1', outraInfo: '1'},
+        //        {mensagem: 'algum erro 2', outraInfo: '2'}
         //      ]
         // }
 
         var NOME_INTERCEPTOR_ERRO_SERVIDOR = 'AltErroServidorInterceptor';
 
-        $provide.factory(NOME_INTERCEPTOR_ERRO_SERVIDOR, ['$q', '$log',
-          function($q, $log) {
-            var _onServerResponseError = function(error) {
-                var _isRespostaComErro = function(info) {
-                    return info && info.data && info.data.erros && info.data.erros.length;
-                };
+        $provide.factory(NOME_INTERCEPTOR_ERRO_SERVIDOR, ['$q',
+          function($q) {
+            var _onServerResponseError = function(errWrapper) {
+                var _temErroInformado = errWrapper && errWrapper.data &&
+                                        errWrapper.data.erros && errWrapper.data.erros.length;
 
-                if (_isRespostaComErro(error)) {
-                    error.mensagem = error.data.erros[0].mensagem;
+                if (_temErroInformado) {
+                    var _erros = errWrapper.data.erros;
+
+                    errWrapper.mensagem = _erros[0].mensagem;
+                    _erros.shift();
+                    errWrapper.mensagens = _erros;
                 }
 
-                return $q.reject(error);
+                return $q.reject(errWrapper);
           };
 
-          return {responseError: _onServerResponseError};
+          return {
+            responseError: _onServerResponseError
+          };
         }]);
 
         $httpProvider.interceptors.push(NOME_INTERCEPTOR_ERRO_SERVIDOR);
@@ -37,11 +54,14 @@
         var MSG_DEFAULT = "Houve um problema no momento da requisição.";
         var _erro = {};
 
-        if (angular.isObject(error) && angular.isDefined(error.mensagem)) {
+        if (ng.isObject(error) && ng.isDefined(error.mensagem)) {
           _erro = error;
         } else {
-          _erro = { mensagem : msg || MSG_DEFAULT};
+          _erro = {
+            mensagem : msg || MSG_DEFAULT
+          };
         }
+
         return _erro.mensagem;
       };
     }]);

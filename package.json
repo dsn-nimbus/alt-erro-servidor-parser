@@ -1,6 +1,6 @@
 {
   "name": "alt-erro-servidor-parser",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/alt-erro-servidor-parser.min.js",
   "scripts": {
     "build": "gulp build",

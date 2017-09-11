@@ -66,8 +66,9 @@ describe('alt.erro-servidor-parser', function() {
     describe('onResponseError', function() {
       it('deve retornar o objeto com erro - o mesmo não obedece ao schema de erros passado pelo servidor', function() {
         var URL = '/algum-lugar';
+        var resposta = {a: 'b'}
 
-        _httpBackend.expectGET(URL).respond(400, {a: 'b'});
+        _httpBackend.expectGET(URL).respond(400, resposta);
 
         _httpMock
           .get(URL)
@@ -85,8 +86,13 @@ describe('alt.erro-servidor-parser', function() {
 
       it('deve retornar o objeto formatado, mensagem passada de acordo com schema definido pelo servidor', function() {
         var URL = '/algum-lugar';
+        var resposta = {
+          erros: [
+            {mensagem: 'b'}
+          ]
+        }
 
-        _httpBackend.expectGET(URL).respond(400, {erros: [{mensagem: 'b'}]});
+        _httpBackend.expectGET(URL).respond(400, resposta);
 
         _httpMock
           .get(URL)
@@ -97,6 +103,7 @@ describe('alt.erro-servidor-parser', function() {
             expect(erro).toBeDefined();
             expect(erro.status).toBe(400);
             expect(erro.mensagem).toBe('b');
+            expect(erro.mensagens).toEqual([]);
           });
 
         _httpBackend.flush();
@@ -104,8 +111,14 @@ describe('alt.erro-servidor-parser', function() {
 
       it('deve retornar o objeto formatado, com apenas uma mensagem de erro', function() {
         var URL = '/algum-lugar';
+        var resposta = {
+          erros: [
+            {mensagem: 'b'},
+            {mensagem: 'c'}
+          ]
+        }
 
-        _httpBackend.expectGET(URL).respond(400, {erros: [{mensagem: 'b'}, {mensagem: 'c'}]});
+        _httpBackend.expectGET(URL).respond(400, resposta);
 
         _httpMock
           .get(URL)
@@ -116,6 +129,57 @@ describe('alt.erro-servidor-parser', function() {
             expect(erro).toBeDefined();
             expect(erro.status).toBe(400);
             expect(erro.mensagem).toBe('b');
+            expect(erro.mensagens).toEqual([
+              {
+                mensagem: 'c'
+              }
+            ]);
+          });
+
+        _httpBackend.flush();
+      });
+
+      it('deve retornar o objeto formatado, com apenas uma mensagem de erro e mais 3 no array', function() {
+        var URL = '/algum-lugar';
+        var resposta = {
+          erros: [
+            {mensagem: 'b', outraInfo: '2'},
+            {mensagem: 'c', outraInfo: '3'},
+            {mensagem: 'd', outraInfo: '4'},
+            {mensagem: 'e', outraInfo: '5'},
+            {mensagem: 'f', outraInfo: '6'}
+          ]
+        }
+
+        _httpBackend.expectGET(URL).respond(400, resposta);
+
+        _httpMock
+          .get(URL)
+          .then(function() {
+            expect(true).toBeFalsy();
+          })
+          .catch(function(erro) {
+            expect(erro).toBeDefined();
+            expect(erro.status).toBe(400);
+            expect(erro.mensagem).toBe('b');
+            expect(erro.mensagens).toEqual([
+              {
+                mensagem: 'c',
+                outraInfo: '3'
+              },
+              {
+                mensagem: 'd',
+                outraInfo: '4'
+              },
+              {
+                mensagem: 'e',
+                outraInfo: '5'
+              },
+              {
+                mensagem: 'f',
+                outraInfo: '6'
+              }
+            ]);
           });
 
         _httpBackend.flush();
