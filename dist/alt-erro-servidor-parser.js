@@ -25,11 +25,14 @@
 
         var NOME_INTERCEPTOR_ERRO_SERVIDOR = 'AltErroServidorInterceptor';
 
-        $provide.factory(NOME_INTERCEPTOR_ERRO_SERVIDOR, ['$q',
+        $provide.factory(NOME_INTERCEPTOR_ERRO_SERVIDOR, [
+          '$q',
           function($q) {
             var _onServerResponseError = function(errWrapper) {
-                var _temErroInformado = errWrapper && errWrapper.data &&
-                                        errWrapper.data.erros && errWrapper.data.erros.length;
+                var _temErroInformado = errWrapper &&
+                                        errWrapper.data &&
+                                        errWrapper.data.erros &&
+                                        errWrapper.data.erros.length;
 
                 if (_temErroInformado) {
                     var _erros = errWrapper.data.erros;
@@ -50,19 +53,25 @@
         $httpProvider.interceptors.push(NOME_INTERCEPTOR_ERRO_SERVIDOR);
     }])
     .factory('altSanitizeMensagemErroBackend', [function() {
-      return function sanitizeErroBackend(error, msg){
+      return function(err, msg) {
         var MSG_DEFAULT = "Houve um problema no momento da requisição.";
         var _erro = {};
 
-        if (ng.isObject(error) && ng.isDefined(error.mensagem)) {
-          _erro = error;
+        if (ng.isObject(err) && ng.isDefined(err.mensagem)) {
+          _erro = err;
         } else {
           _erro = {
-            mensagem : msg || MSG_DEFAULT
+            mensagem: msg || MSG_DEFAULT
           };
         }
 
         return _erro.mensagem;
+      };
+    }])
+    .factory('altSanitizeListaMensagensErroBackend', [function() {
+      return function(err) {
+        var _erro = ng.isObject(err) ? err : {};
+        return _erro.mensagens || [];
       };
     }]);
 }(window.angular));

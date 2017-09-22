@@ -1,7 +1,7 @@
 "use strict";
 
 describe('alt.erro-servidor-parser', function() {
-  var _httpMock, _httpBackend, _altSanitizeMensagemErroBackend;
+  var _httpMock, _httpBackend, _altSanitizeMensagemErroBackend, _altSanitizeListaMensagensErroBackend;
 
   beforeEach(module('alt.erro-servidor-parser'));
 
@@ -9,9 +9,10 @@ describe('alt.erro-servidor-parser', function() {
     _httpMock = $injector.get('$http');
     _httpBackend = $injector.get('$httpBackend');
     _altSanitizeMensagemErroBackend = $injector.get('altSanitizeMensagemErroBackend');
+    _altSanitizeListaMensagensErroBackend = $injector.get('altSanitizeListaMensagensErroBackend');
   }));
 
-  describe('service', function() {
+  describe('altSanitizeMensagemErroBackend', function() {
     describe('criação', function(){
       it('deve retornar uma função', function(){
         expect(typeof _altSanitizeMensagemErroBackend).toBe('function');
@@ -61,6 +62,52 @@ describe('alt.erro-servidor-parser', function() {
       });
     });
   });
+
+  describe('altSanitizeListaMensagensErroBackend', function() {
+    it('deve ser uma função', function() {
+      expect(typeof _altSanitizeListaMensagensErroBackend).toBe('function')
+    })
+
+    it('deve retornar um array vazio, objeto de erro está undefined', function() {
+      var _erro = undefined
+
+      expect(_altSanitizeListaMensagensErroBackend(_erro)).toEqual([])
+    })
+
+    it('deve retornar um array vazio, objeto de erro é um objeto vazio', function() {
+      var _erro = {}
+
+      expect(_altSanitizeListaMensagensErroBackend(_erro)).toEqual([])
+    })
+
+    it('deve retornar um array preenchido com o que está no objeto de erro', function() {
+      var _erro = {
+        mensagens: [
+          {
+            mensagem: 'a'
+          },
+          {
+            mensagem: 'b'
+          },
+          {
+            mensagem: 'c'
+          }
+        ]
+      }
+
+      expect(_altSanitizeListaMensagensErroBackend(_erro)).toEqual([
+        {
+          mensagem: 'a'
+        },
+        {
+          mensagem: 'b'
+        },
+        {
+          mensagem: 'c'
+        }
+      ])
+    })
+  })
 
   describe('interceptor', function() {
     describe('onResponseError', function() {
