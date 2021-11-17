@@ -38,6 +38,7 @@
                     var _erros = errWrapper.data.erros;
 
                     errWrapper.mensagem = _erros[0].mensagem;
+                    errWrapper.erroOriginal = _erros[0].erroOriginal;
                     _erros.shift();
                     errWrapper.mensagens = _erros;
                 }
@@ -66,6 +67,13 @@
         }
 
         return _erro.mensagem;
+      };
+    }])
+    .factory('altSanitizeMensagemErroOriginalBackend', [function() {
+      return function(err) {
+        if (ng.isObject(err) && ng.isDefined(err.erroOriginal)) {
+          return err.erroOriginal;
+        }
       };
     }])
     .factory('altSanitizeListaMensagensErroBackend', [function() {
